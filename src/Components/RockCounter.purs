@@ -17,7 +17,7 @@ type Output = { count :: Int }
 
 type State = { name :: String, count :: Int }
 
-data Action = ModifyCount Int | SetCount Int
+data Action = ModifyCount (Int -> Int)
 
 component :: forall query m. MonadEffect m => H.Component query Input Output m
 component = H.mkComponent
@@ -31,18 +31,10 @@ initialState input = { name: input.name, count: 0 }
 
 handleAction :: forall m. Action -> H.HalogenM State Action () Output m Unit
 handleAction = case _ of
-  ModifyCount n -> do
-    count <- _.count <$> H.get
-    let newCount = count + n
-    if newCount >= 0 then do
-      H.modify_ \state -> state { count = newCount }
-      raiseCount
-    else pure unit
-  SetCount n
-    | n >= 0 -> do
-        H.modify_ \state -> state { count = n }
-        raiseCount
-    | otherwise -> pure unit
+  ModifyCount f -> do
+    count <- max 0 <<< f <<< _.count <$> H.get
+    H.modify_ \state -> state { count = count }
+    raiseCount
   where
   raiseCount = do
     count <- _.count <$> H.get
@@ -54,12 +46,12 @@ render state = HH.div_
   , HH.div_
       [ HH.text $ "Count: " <> show state.count <> (if state.count >= 50 then " Done" else "") ]
   , HH.div_
-      [ HH.button [ HE.onClick $ const $ ModifyCount 1 ] [ HH.text "Increment" ]
+      [ HH.button [ HE.onClick $ const $ ModifyCount (_ + 1) ] [ HH.text "Increment" ]
       , HH.button
-          [ HE.onClick $ const $ ModifyCount (-1) ]
+          [ HE.onClick $ const $ ModifyCount (_ - 1) ]
           [ HH.text "Decrement" ]
       , HH.button
-          [ HE.onClick $ const $ SetCount 0 ]
+          [ HE.onClick $ const $ ModifyCount (const 0) ]
           [ HH.text "Reset" ]
       ]
   ]
