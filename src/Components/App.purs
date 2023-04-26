@@ -42,7 +42,7 @@ handleAction = case _ of
 render :: forall m. MonadEffect m => State -> H.ComponentHTML Action Slots m
 render state = HH.div_
   [ HH.header_
-      [ HH.h1_ [ HH.text "React Rock Pickers" ]
+      [ HH.h1_ [ HH.text "React Rock Pickers (but with Halogen)" ]
       , HH.p_
           [ HH.text
               "\
