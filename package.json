@@ -1,0 +1,17 @@
+{
+  "name": "halogen-rock-pickers",
+  "version": "1.0.0",
+  "description": "Mike has had enough of his city-slicker sons complaining about cleaning the bathrooms, folding laundry, and other household chores. Luke and his younger brothers are off to learn what it's like to work on a farm.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "spago build"
+  },
+  "author": "Kobi Jones",
+  "license": "ISC",
+  "devDependencies": {
+    "spago": "^0.20.9"
+  }
+}
